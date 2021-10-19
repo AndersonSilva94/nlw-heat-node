@@ -8,7 +8,14 @@ import axios from "axios";
 // 5 - Retorna o token com as infos do token
 
 interface IAccessTokenResponse {
-  acess_token: string
+  access_token: string
+}
+
+interface IUserResponse {
+  avatar_url: string,
+  login: string,
+  id: number,
+  name: string
 }
 
 class AuthenticateUserService {
@@ -22,11 +29,17 @@ class AuthenticateUserService {
         code,
       },
       headers: {
-        "Accept": "application/json"
+        Accept: "application/json"
       }
-    })
+    });
 
-    return accessTokenResponse;
+    const response = await axios.get<IUserResponse>("https://api.github.com/user", {
+      headers: {
+        authorization: `Bearer ${accessTokenResponse.access_token}`
+      }
+    });
+
+    return response.data;
   }
 }
 
